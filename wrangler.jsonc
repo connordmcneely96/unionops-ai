@@ -10,7 +10,7 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "unionops-ai",
 	"main": ".open-next/worker.js",
-	"compatibility_date": "2026-06-30",
+	"compatibility_date": "2026-06-29",
 	"compatibility_flags": [
 		"nodejs_compat",
 		"global_fetch_strictly_public"
@@ -35,7 +35,7 @@
 	"observability": {
 		"enabled": true
 	},
-	"upload_source_maps": true
+	"upload_source_maps": true,
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
@@ -43,15 +43,28 @@
 	// "placement": {  "mode": "smart" }
 	/**
 	 * Bindings
-	 * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
-	 * databases, object storage, AI inference, real-time communication and more.
-	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/
 	 */
-	/**
-	 * Environment Variables
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
-	 * Note: Use secrets to store sensitive data.
-	 * https://developers.cloudflare.com/workers/configuration/secrets/
-	 */
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "unionops-db",
+			"database_id": "433c943e-2695-4833-b171-3cc480ee2151"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "DOCS_BUCKET",
+			"bucket_name": "unionops-docs"
+		}
+	],
+	"vectorize": [
+		{
+			"binding": "VECTORIZE",
+			"index_name": "unionops-vector-index"
+		}
+	],
+	"ai": {
+		"binding": "AI"
+	}
 	// "vars": {  "MY_VARIABLE": "production_value" }
 }
