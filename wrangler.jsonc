@@ -48,7 +48,8 @@
 		{
 			"binding": "DB",
 			"database_name": "unionops-db",
-			"database_id": "433c943e-2695-4833-b171-3cc480ee2151"
+			"database_id": "433c943e-2695-4833-b171-3cc480ee2151",
+			"migrations_dir": "migrations"
 		}
 	],
 	"r2_buckets": [
