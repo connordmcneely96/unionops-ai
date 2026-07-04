@@ -67,3 +67,73 @@ export async function embedTexts(
 export function chunkId(documentId: string, index: number): string {
     return `${documentId}:${index}`;
 }
+
+// ── Retrieval helpers ────────────────────────────────────────────────────────
+
+/**
+ * BGE asymmetric retrieval: prefix applied to QUERIES ONLY, never to stored docs.
+ * This improves retrieval accuracy for passage-search use cases.
+ */
+export const BGE_QUERY_PREFIX =
+    "Represent this sentence for searching relevant passages: ";
+
+/**
+ * Embed a single query string with the BGE query prefix applied.
+ * Returns the single 768-dim vector.
+ */
+export async function embedQuery(ai: Ai, text: string): Promise<number[]> {
+    const vectors = await embedTexts(ai, [BGE_QUERY_PREFIX + text]);
+    return vectors[0];
+}
+
+export interface RetrievedChunk {
+    id: string;
+    title: string;
+    content: string;
+    score: number;
+}
+
+/**
+ * Full retrieval pipeline: embed question → Vectorize query → D1 chunk fetch.
+ * Returns chunks ordered by Vectorize score (best first).
+ * Skips any match whose chunk row is missing in D1 (defensive).
+ */
+export async function retrieve(
+    env: { AI: Ai; VECTORIZE: VectorizeIndex; DB: D1Database },
+    question: string
+): Promise<RetrievedChunk[]> {
+    const vector = await embedQuery(env.AI, question);
+
+    const queryResult = await env.VECTORIZE.query(vector, {
+        topK: TOP_K,
+        returnMetadata: "all",
+    });
+
+    if (!queryResult.matches.length) return [];
+
+    const ids = queryResult.matches.map((m) => m.id);
+    const placeholders = ids.map(() => "?").join(", ");
+
+    const rows = await env.DB.prepare(
+        `SELECT id, content FROM document_chunks WHERE id IN (${placeholders})`
+    )
+        .bind(...ids)
+        .all<{ id: string; content: string }>();
+
+    const rowMap = new Map(rows.results.map((r) => [r.id, r.content]));
+
+    const results: RetrievedChunk[] = [];
+    for (const match of queryResult.matches) {
+        const content = rowMap.get(match.id);
+        if (content === undefined) continue;
+        const metadata = match.metadata as Record<string, string> | undefined;
+        results.push({
+            id: match.id,
+            title: metadata?.title ?? "Unknown Document",
+            content,
+            score: match.score,
+        });
+    }
+
+    return results;
+}
