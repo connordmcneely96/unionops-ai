@@ -81,6 +81,22 @@
 	--sidebar-accent-foreground: oklch(0.205 0 0);
 	--sidebar-border: oklch(0.922 0 0);
 	--sidebar-ring: oklch(0.708 0 0);
+
+	/* Dashboard design tokens */
+	--ds-bg: #f7f8fa;
+	--ds-card: #ffffff;
+	--ds-border: #e6e8eb;
+	--ds-radius: 8px;
+	--ds-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+	--ds-text-primary: #111418;
+	--ds-text-secondary: #5b6470;
+	--ds-text-muted: #8a929e;
+	--ds-accent: #1f5fd6;
+	--ds-sev-high: #c8322b;
+	--ds-sev-medium: #b7791f;
+	--ds-sev-low: #3f7a52;
+	--ds-badge-bg: #eef1f4;
+	--ds-badge-text: #4b5563;
 }
 
 .dark {
@@ -123,8 +139,12 @@
 	}
   body {
     @apply bg-background text-foreground;
+		background-color: var(--ds-bg);
+		color: var(--ds-text-primary);
+		font-family: Inter, system-ui, -apple-system, sans-serif;
 	}
   html {
     @apply font-sans;
+		height: 100%;
 	}
 }
