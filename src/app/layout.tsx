@@ -1,30 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Link from "next/link";
-import {
-    LayoutDashboard,
-    MessageSquare,
-    ClipboardList,
-    ShieldAlert,
-    Wrench,
-    FileText,
-    BarChart2,
-} from "lucide-react";
+import { SidebarNav } from "./_components/SidebarNav";
 
 export const metadata: Metadata = {
     title: "UnionOps AI — Union County Campus",
     description: "Facility operations dashboard for Union County Campus",
 };
 
-const NAV_ITEMS = [
-    { label: "Dashboard", href: "/", icon: LayoutDashboard, active: true },
-    { label: "Ask Facility", href: null, icon: MessageSquare, active: false },
-    { label: "Inspections", href: null, icon: ClipboardList, active: false },
-    { label: "Security", href: null, icon: ShieldAlert, active: false },
-    { label: "Work Orders", href: null, icon: Wrench, active: false },
-    { label: "Documents", href: null, icon: FileText, active: false },
-    { label: "Reports", href: null, icon: BarChart2, active: false },
-];
 
 function TopBar() {
     const today = new Date().toLocaleDateString("en-US", {
@@ -110,39 +92,7 @@ function Sidebar() {
                 UnionOps
             </div>
 
-            {NAV_ITEMS.map((item) => {
-                const Icon = item.icon;
-                const baseStyle: React.CSSProperties = {
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    padding: "7px 8px",
-                    borderRadius: 6,
-                    fontSize: 13.5,
-                    fontWeight: item.active ? 500 : 400,
-                    color: item.active ? "var(--ds-accent)" : "var(--ds-text-secondary)",
-                    backgroundColor: item.active ? "#eef3fd" : "transparent",
-                    textDecoration: "none",
-                    cursor: item.active ? "pointer" : "default",
-                    userSelect: "none",
-                };
-
-                if (item.href && item.active) {
-                    return (
-                        <Link key={item.label} href={item.href} style={baseStyle}>
-                            <Icon size={16} strokeWidth={1.5} />
-                            {item.label}
-                        </Link>
-                    );
-                }
-
-                return (
-                    <div key={item.label} style={baseStyle}>
-                        <Icon size={16} strokeWidth={1.5} />
-                        {item.label}
-                    </div>
-                );
-            })}
+            <SidebarNav />
         </nav>
     );
 }
