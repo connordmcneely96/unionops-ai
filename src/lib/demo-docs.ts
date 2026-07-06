@@ -130,52 +130,54 @@ All readings at startup shall be logged in the site operations log and retained 
 
 ## 1. Purpose
 
-This procedure governs thermographic (infrared) inspection of the main switchgear (SWGR-1) at the Union County Campus. Thermographic inspections identify elevated connection resistance, load imbalance, and degraded components before they progress to failure. This procedure applies to both scheduled annual inspections and follow-up scans triggered by drone thermal inspection findings.
+This procedure governs thermographic (infrared) inspection of the main switchgear (SWGR-1) at the Union County Campus. Thermographic inspection identifies elevated connection resistance, load imbalance, and degraded components before they progress to failure. It applies to scheduled inspections and to follow-up scans triggered by drone thermal findings.
 
 ## 2. Interpretation of Thermal Findings
 
-### 2.1 Phase-to-Phase Temperature Differentials
+### 2.1 Severity Criteria (ANSI/NETA MTS, ΔT between similar components)
 
-A temperature differential between a suspect connection and adjacent similar connections indicates elevated contact resistance at that point. Severity classification is based on the phase-to-phase delta above adjacent phases, assessed against the NETA/ANSI thermal severity scale per site standard:
+Severity is assessed using the temperature difference (ΔT) between a suspect connection and an adjacent similar phase under similar loading, per the ANSI/NETA MTS thermographic criteria adopted as the site standard. Valid comparison requires the equipment to be under representative load at the time of the scan.
 
-- **Low concern:** < 10 °F delta above adjacent phases — monitor and re-scan at next scheduled interval.
-- **Moderate concern:** 10 – 25 °F delta above adjacent phases — schedule corrective maintenance within 30 days; re-scan after correction.
-- **High concern (suspect connection):** > 25 °F delta above adjacent phases — indicates a suspect connection requiring prompt corrective action. De-energize under LOTO, inspect and clean the lug, re-torque per the equipment datasheet, check for load imbalance, and re-scan after correction before returning to full service.
-- **Critical:** Visible discoloration, arcing evidence, or > 50 °F delta — treat as emergency; do not re-energize without engineering sign-off.
+- **Investigate:** ΔT up to approximately 5 °F (3 °C) above a similar phase — possible deficiency; monitor and re-scan at the next scheduled interval.
+- **Probable deficiency:** ΔT approximately 7–27 °F (4–15 °C) — schedule corrective maintenance; repair as time permits; re-scan after correction.
+- **Major discrepancy (suspect connection):** ΔT greater than 27 °F (15 °C) above a similar phase under similar load — prompt corrective action required. De-energize under LOTO, inspect and clean the lug, re-torque per the equipment datasheet, check for load imbalance, and re-scan after correction before returning to full service.
+- **Emergency:** visible discoloration or arcing evidence, or ΔT over ambient air exceeding 72 °F (40 °C) — component failure may be imminent; do not re-energize without engineering sign-off.
+
+Note: A drone thermal finding reported as a phase lug running roughly 28 °F above adjacent phases exceeds the 27 °F major-discrepancy threshold and requires the corrective action in Section 2.2.
 
 ### 2.2 Responding to a Suspect Connection
 
-When a drone thermal inspection or scheduled scan identifies a phase-to-phase temperature delta above adjacent phases that indicates a suspect connection:
+When a drone thermal pass or scheduled scan identifies a ΔT above a similar phase that meets the major-discrepancy threshold:
 
-1. **De-energize under LOTO** — issue a full lockout/tagout per NFPA 70E site procedures. Verify zero energy state with a calibrated meter before making contact.
+1. **De-energize under LOTO** — issue full lockout/tagout per NFPA 70E and the site electrical safety program. Verify a zero-energy state with a calibrated meter before making contact.
 2. **Inspect the lug** — remove the lug cover or panel section. Visually inspect for discoloration, oxidation, or mechanical damage at the conductor termination.
-3. **Clean the contact surfaces** — remove oxidation with approved contact cleaner; do not use abrasives that leave conductive residue.
-4. **Re-torque the lug** — apply anti-oxidant compound per equipment datasheet and re-torque the lug connector to the torque value specified in the equipment datasheet for the conductor size.
-5. **Check for load imbalance** — review phase current readings before and after the corrective action. If one phase carries disproportionately higher load, investigate upstream distribution and correct before re-energizing.
-6. **Re-scan after correction** — perform a thermographic re-scan with the switchgear at representative load (> 40 % of rated) after a minimum soak period per site standard. Confirm the delta has returned to < 10 °F. Document results.
+3. **Clean the contact surfaces** — remove oxidation with an approved contact cleaner; do not use abrasives that leave conductive residue.
+4. **Re-torque the lug** — apply anti-oxidant compound where specified and re-torque the connector to the value in the equipment datasheet for the conductor size. Do not substitute a generic torque value.
+5. **Check for load imbalance** — review phase current readings before and after correction. If one phase carries disproportionately higher load, investigate upstream distribution and correct before re-energizing.
+6. **Re-scan after correction** — perform a thermographic re-scan with the switchgear at representative load (at least ~40% of rated, per the site standard for valid surveys) after a soak period. Confirm the ΔT has returned to the investigate/monitor range. Document results.
 
 ## 3. Drone Thermal Integration
 
-Drone thermal inspection passes over SWGR-1 are performed with panels open (where safe and permitted) or through IR-transparent panel windows where available. A drone thermal finding of a phase lug running above adjacent phases triggers the corrective action sequence in Section 2.2, regardless of the originating inspection method.
+Drone thermal passes over SWGR-1 are performed with panels open where safe and permitted, or through IR-transparent panel windows where available. A drone finding of a phase lug above adjacent phases triggers the Section 2.2 sequence regardless of the originating inspection method.
 
 ## 4. Equipment and PPE Requirements
 
-- Calibrated thermal imaging camera (FLIR or equivalent), calibrated per manufacturer schedule.
-- Arc flash PPE per the PPE hazard assessment for SWGR-1 (minimum CAT 2 as specified in the facility arc flash study per site standard).
+- Calibrated thermal imaging camera, calibrated per the manufacturer schedule.
+- Arc-flash PPE per the facility arc-flash study for SWGR-1 (PPE category is determined by the incident-energy analysis, not a fixed value).
 - LOTO hardware and documentation kit.
 - Calibrated voltage meter for zero-energy verification.
-- Anti-oxidant compound and contact cleaner approved by the switchgear manufacturer (per equipment datasheet).
-- Calibrated torque wrench set to the lug torque value per equipment datasheet.
+- Approved anti-oxidant compound and contact cleaner (per equipment datasheet).
+- Calibrated torque wrench set to the lug torque value per the equipment datasheet.
 
 ## 5. Inspection Schedule
 
-- Annual thermographic inspection during planned maintenance window.
-- Triggered inspection: within 10 business days of a drone thermal finding rated moderate or higher.
-- Post-repair re-scan: before return to service after any lug corrective action.
+- Scheduled thermographic inspection during planned maintenance windows.
+- Triggered inspection following any drone thermal finding rated probable-deficiency or higher, per the site standard.
+- Post-repair re-scan before return to service after any lug corrective action.
 
 ## 6. Documentation
 
-Each inspection shall produce a written report including: scan date, load level at time of scan, thermal images with temperature annotations, delta values for all three phases at each point inspected, severity classification per Section 2.1, and recommended action. Reports are retained in the document management system per site record-keeping standard.
+Each inspection produces a written report including scan date, load level at time of scan, thermal images with temperature annotations, ΔT values for all three phases at each point, severity classification per Section 2.1, and recommended action. Reports are retained per the site record-keeping standard.
 `,
     },
     {
