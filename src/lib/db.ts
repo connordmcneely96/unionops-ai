@@ -297,3 +297,71 @@ export async function getReadinessByDomain(): Promise<DomainReadiness[]> {
 
     return [...bySystem.values()].sort((a, b) => a.system.localeCompare(b.system));
 }
+
+// ── Work-order generation helpers ────────────────────────────────────────────
+
+export interface FindingRow {
+    id: string;
+    equipment_tag: string;
+    finding_type: string;
+    source: string;
+    severity: string;
+    summary: string;
+    detail: string | null;
+    status: string;
+}
+
+export async function getFindingById(id: string): Promise<FindingRow | null> {
+    const db = await getDB();
+    const result = await db
+        .prepare(
+            "SELECT id, equipment_tag, finding_type, source, severity, summary, detail, status " +
+            "FROM inspection_findings WHERE facility_id = ? AND id = ?"
+        )
+        .bind(FACILITY_ID, id)
+        .first<FindingRow>();
+    return result ?? null;
+}
+
+export interface SaveWorkOrderInput {
+    id: string;
+    equipment_tag: string;
+    title: string;
+    problem_statement: string;
+    priority: string;
+    probable_causes: string;
+    recommended_actions: string;
+    safety_notes: string;
+    source_type: string;
+    source_id: string;
+}
+
+/**
+ * Idempotent persist — INSERT OR REPLACE on the caller-supplied fixed id.
+ * facility_id is always FAC-UC and status is always 'open'.
+ */
+export async function saveWorkOrder(wo: SaveWorkOrderInput): Promise<string> {
+    const db = await getDB();
+    await db
+        .prepare(
+            "INSERT OR REPLACE INTO work_orders " +
+            "(id, facility_id, equipment_tag, title, problem_statement, priority, " +
+            "probable_causes, recommended_actions, safety_notes, source_type, source_id, status) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'open')"
+        )
+        .bind(
+            wo.id,
+            FACILITY_ID,
+            wo.equipment_tag,
+            wo.title,
+            wo.problem_statement,
+            wo.priority,
+            wo.probable_causes,
+            wo.recommended_actions,
+            wo.safety_notes,
+            wo.source_type,
+            wo.source_id
+        )
+        .run();
+    return wo.id;
+}
