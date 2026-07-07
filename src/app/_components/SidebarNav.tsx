@@ -20,13 +20,13 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-    { label: "Dashboard",   href: "/",    icon: LayoutDashboard },
-    { label: "Ask Facility", href: "/ask", icon: MessageSquare },
-    { label: "Inspections",  href: null,   icon: ClipboardList },
-    { label: "Security",     href: null,   icon: ShieldAlert },
-    { label: "Work Orders",  href: null,   icon: Wrench },
-    { label: "Documents",    href: null,      icon: FileText },
-    { label: "Reports",      href: "/reports", icon: BarChart2 },
+    { label: "Dashboard",   href: "/",            icon: LayoutDashboard },
+    { label: "Ask Facility", href: "/ask",         icon: MessageSquare },
+    { label: "Inspections",  href: "/inspections", icon: ClipboardList },
+    { label: "Security",     href: "/security",    icon: ShieldAlert },
+    { label: "Work Orders",  href: "/work-orders", icon: Wrench },
+    { label: "Documents",    href: "/documents",   icon: FileText },
+    { label: "Reports",      href: "/reports",     icon: BarChart2 },
 ];
 
 export function SidebarNav() {

@@ -157,7 +157,9 @@ export async function POST() {
         if (!response.ok) {
             const errText = await response.text().catch(() => "");
             console.error("Anthropic API error:", response.status, errText);
-            return NextResponse.json({ error: "Model request failed" }, { status: 502 });
+            // Model failed — still return the deterministic numbers so the
+            // report always renders.
+            return NextResponse.json({ data, narrative: EMPTY_NARRATIVE });
         }
 
         const body = (await response.json()) as {
@@ -182,6 +184,7 @@ export async function POST() {
         return NextResponse.json({ data, narrative });
     } catch (err) {
         console.error("Report generation error:", err);
-        return NextResponse.json({ error: "Report generation failed" }, { status: 502 });
+        // Any model-call failure still returns the deterministic numbers.
+        return NextResponse.json({ data, narrative: EMPTY_NARRATIVE });
     }
 }
