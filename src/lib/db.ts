@@ -32,6 +32,7 @@ export interface SecurityEvent {
     summary: string;
     occurred_at: string;
     status: string;
+    location_note?: string | null;
 }
 
 export interface Alarm {
@@ -174,6 +175,73 @@ export async function getAlarms(): Promise<Alarm[]> {
         )
         .bind(FACILITY_ID)
         .all<Alarm>();
+    return result.results;
+}
+
+// ── All-status read helpers (list pages show every status, not just open) ────
+
+export async function getAllFindings(): Promise<InspectionFinding[]> {
+    const db = await getDB();
+    const result = await db
+        .prepare(
+            "SELECT id, equipment_tag, finding_type, source, severity, summary, status, detected_at " +
+            "FROM inspection_findings WHERE facility_id = ? ORDER BY detected_at DESC"
+        )
+        .bind(FACILITY_ID)
+        .all<InspectionFinding>();
+    return result.results;
+}
+
+export async function getAllSecurityEvents(): Promise<SecurityEvent[]> {
+    const db = await getDB();
+    const result = await db
+        .prepare(
+            "SELECT id, event_type, source, severity, summary, location_note, status, occurred_at " +
+            "FROM security_events WHERE facility_id = ? ORDER BY occurred_at DESC"
+        )
+        .bind(FACILITY_ID)
+        .all<SecurityEvent>();
+    return result.results;
+}
+
+export async function getAllWorkOrders(): Promise<WorkOrder[]> {
+    const db = await getDB();
+    const result = await db
+        .prepare(
+            "SELECT wo.id, wo.equipment_tag, wo.title, wo.priority, wo.source_type, wo.source_id, wo.status, " +
+            "CASE " +
+            "  WHEN wo.source_type = 'inspection_finding' THEN if_.summary " +
+            "  WHEN wo.source_type = 'alarm' THEN al.alarm_name " +
+            "  ELSE NULL " +
+            "END as source_summary " +
+            "FROM work_orders wo " +
+            "LEFT JOIN inspection_findings if_ ON wo.source_type = 'inspection_finding' AND wo.source_id = if_.id " +
+            "LEFT JOIN alarms al ON wo.source_type = 'alarm' AND wo.source_id = al.id " +
+            "WHERE wo.facility_id = ? " +
+            "ORDER BY wo.created_at DESC"
+        )
+        .bind(FACILITY_ID)
+        .all<WorkOrder>();
+    return result.results;
+}
+
+export interface DocumentRow {
+    id: string;
+    title: string;
+    doc_type: string;
+    status: string;
+    indexed_at: string | null;
+}
+
+export async function getAllDocuments(): Promise<DocumentRow[]> {
+    const db = await getDB();
+    const result = await db
+        .prepare(
+            "SELECT id, title, doc_type, status, indexed_at " +
+            "FROM documents WHERE facility_id = ? ORDER BY title ASC"
+        )
+        .bind(FACILITY_ID)
+        .all<DocumentRow>();
     return result.results;
 }
 
