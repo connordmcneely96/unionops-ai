@@ -176,3 +176,56 @@ export async function getAlarms(): Promise<Alarm[]> {
         .all<Alarm>();
     return result.results;
 }
+
+export interface DomainReadiness {
+    system: string;
+    openHigh: number;
+    openMedium: number;
+    openLow: number;
+    status: "At Risk" | "Watch" | "On Track";
+}
+
+/**
+ * Groups OPEN inspection_findings and OPEN alarms by the owning equipment's
+ * `system` (joined on equipment tag). status = "At Risk" if any high,
+ * "Watch" if any medium, else "On Track".
+ */
+export async function getReadinessByDomain(): Promise<DomainReadiness[]> {
+    const db = await getDB();
+
+    // Union open findings + open alarms, resolve owning system via equipment tag.
+    const result = await db
+        .prepare(
+            "SELECT e.system AS system, x.severity AS severity FROM (" +
+            "  SELECT equipment_tag, severity FROM inspection_findings " +
+            "    WHERE facility_id = ? AND status = 'open' " +
+            "  UNION ALL " +
+            "  SELECT equipment_tag, severity FROM alarms " +
+            "    WHERE facility_id = ? AND status = 'open' " +
+            ") x " +
+            "JOIN equipment e ON e.tag = x.equipment_tag AND e.facility_id = ?"
+        )
+        .bind(FACILITY_ID, FACILITY_ID, FACILITY_ID)
+        .all<{ system: string | null; severity: string }>();
+
+    const bySystem = new Map<string, DomainReadiness>();
+    for (const row of result.results) {
+        const system = row.system ?? "unassigned";
+        let entry = bySystem.get(system);
+        if (!entry) {
+            entry = { system, openHigh: 0, openMedium: 0, openLow: 0, status: "On Track" };
+            bySystem.set(system, entry);
+        }
+        if (row.severity === "high" || row.severity === "critical") entry.openHigh++;
+        else if (row.severity === "medium") entry.openMedium++;
+        else entry.openLow++;
+    }
+
+    for (const entry of bySystem.values()) {
+        entry.status =
+            entry.openHigh > 0 ? "At Risk" :
+            entry.openMedium > 0 ? "Watch" : "On Track";
+    }
+
+    return [...bySystem.values()].sort((a, b) => a.system.localeCompare(b.system));
+}
