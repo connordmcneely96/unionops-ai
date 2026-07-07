@@ -25,8 +25,8 @@ const NAV_ITEMS: NavItem[] = [
     { label: "Inspections",  href: null,   icon: ClipboardList },
     { label: "Security",     href: null,   icon: ShieldAlert },
     { label: "Work Orders",  href: null,   icon: Wrench },
-    { label: "Documents",    href: null,   icon: FileText },
-    { label: "Reports",      href: null,   icon: BarChart2 },
+    { label: "Documents",    href: null,      icon: FileText },
+    { label: "Reports",      href: "/reports", icon: BarChart2 },
 ];
 
 export function SidebarNav() {

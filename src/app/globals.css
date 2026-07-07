@@ -148,3 +148,42 @@
 		height: 100%;
 	}
 }
+
+/* Print / Save-as-PDF — scoped to the /reports page via :has(.reports-page).
+   The dashboard and /ask have no .reports-page element, so these rules never
+   affect their print output. */
+@media print {
+	body:has(.reports-page) {
+		background: #ffffff !important;
+		display: block !important;
+		height: auto !important;
+		overflow: visible !important;
+	}
+	/* Hide top bar, sidebar, and on-screen controls */
+	body:has(.reports-page) > header,
+	body:has(.reports-page) nav,
+	body:has(.reports-page) .report-controls {
+		display: none !important;
+	}
+	body:has(.reports-page) > div,
+	body:has(.reports-page) main {
+		display: block !important;
+		overflow: visible !important;
+		padding: 0 !important;
+		margin: 0 !important;
+	}
+	body:has(.reports-page) .reports-page {
+		max-width: 100% !important;
+		margin: 0 !important;
+	}
+	/* Report card: full-width, flat, black-on-white, page-friendly margins */
+	body:has(.reports-page) .report-card {
+		max-width: 100% !important;
+		box-shadow: none !important;
+		border: none !important;
+		border-radius: 0 !important;
+		padding: 0 !important;
+		margin: 16px !important;
+		color: #000000 !important;
+	}
+}
