@@ -10,6 +10,7 @@ import {
     StatusPill,
     severityTextColor,
 } from "@/app/_components/ui";
+import { GenerateWorkOrder } from "@/app/_components/GenerateWorkOrder";
 
 const SEVERITY_RANK: Record<string, number> = {
     critical: 0,
@@ -65,6 +66,16 @@ export default async function InspectionsPage() {
                             </div>
                             <SourceBadge source={f.source} />
                             <StatusPill status={f.status} />
+                            <div style={{ width: "100%", marginLeft: 17 }}>
+                                <GenerateWorkOrder
+                                    finding={{
+                                        id: f.id,
+                                        equipment_tag: f.equipment_tag,
+                                        severity: f.severity,
+                                        summary: f.summary,
+                                    }}
+                                />
+                            </div>
                         </div>
                     ))
                 )}
