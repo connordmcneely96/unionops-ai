@@ -365,3 +365,75 @@ export async function saveWorkOrder(wo: SaveWorkOrderInput): Promise<string> {
         .run();
     return wo.id;
 }
+
+// ── Ingestion engine upsert helpers (idempotent, caller-supplied ids) ─────────
+
+export interface UpsertFindingInput {
+    id: string;
+    equipment_tag: string;
+    finding_type: string;
+    source: string;
+    severity: string;
+    summary: string;
+    detail: string;
+}
+
+/**
+ * Idempotent finding write — INSERT OR REPLACE on the caller-supplied id.
+ * facility_id is always FAC-UC, status 'open', detected_at set to now.
+ */
+export async function upsertFinding(f: UpsertFindingInput): Promise<string> {
+    const db = await getDB();
+    await db
+        .prepare(
+            "INSERT OR REPLACE INTO inspection_findings " +
+            "(id, facility_id, equipment_tag, finding_type, source, severity, summary, detail, detected_at, status) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'open')"
+        )
+        .bind(
+            f.id,
+            FACILITY_ID,
+            f.equipment_tag,
+            f.finding_type,
+            f.source,
+            f.severity,
+            f.summary,
+            f.detail,
+            new Date().toISOString()
+        )
+        .run();
+    return f.id;
+}
+
+export interface UpsertAlarmInput {
+    id: string;
+    equipment_tag: string;
+    severity: string;
+    alarm_name: string;
+    description: string;
+}
+
+/**
+ * Idempotent alarm write — INSERT OR REPLACE on the caller-supplied id.
+ * facility_id is always FAC-UC, status 'open', occurred_at set to now.
+ */
+export async function upsertAlarm(a: UpsertAlarmInput): Promise<string> {
+    const db = await getDB();
+    await db
+        .prepare(
+            "INSERT OR REPLACE INTO alarms " +
+            "(id, facility_id, equipment_tag, severity, alarm_name, description, occurred_at, status) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, 'open')"
+        )
+        .bind(
+            a.id,
+            FACILITY_ID,
+            a.equipment_tag,
+            a.severity,
+            a.alarm_name,
+            a.description,
+            new Date().toISOString()
+        )
+        .run();
+    return a.id;
+}
